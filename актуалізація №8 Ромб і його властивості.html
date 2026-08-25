@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Актуалізація знань: Підготовка до вивчення ромба</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX для формул -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Шрифти -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overscroll-behavior: none;
+        }
+        .math-font { font-family: 'Lora', Georgia, serif; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(6px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        button, label { 
+            touch-action: manipulation; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .high-contrast-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col md:flex-row overflow-hidden m-0 p-0 select-none bg-[#F2FCEC]">
+
+    <!-- ЛІВА ПАНЕЛЬ (максимально компактні відступи) -->
+    <div id="left-panel" class="w-full md:w-[50%] lg:w-[45%] xl:w-[40%] h-[55%] md:h-full bg-[#F2FCEC] p-2 sm:p-3 lg:p-4 xl:p-5 flex flex-col justify-center relative border-b md:border-b-0 md:border-r border-emerald-200/80 overflow-y-auto custom-scrollbar transition-all duration-500 z-10 shadow-xl md:shadow-none pb-12 md:pb-4">
+        
+        <div class="w-full space-y-2 md:space-y-3 max-w-4xl mx-auto my-auto">
+            
+            <!-- Заголовок і текст (в один рядок) -->
+            <div class="flex items-start justify-between gap-2">
+                <div class="text-[15px] md:text-[16px] lg:text-[17px] font-semibold text-slate-800 math-font leading-snug">
+                    <span class="inline-block text-[12px] md:text-[13px] font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-200/60 px-2.5 py-0.5 lg:px-3 lg:py-1 rounded-full mr-1 align-middle" id="step-label">
+                        № 1
+                    </span>
+                    <span id="question-text" class="align-middle inline">Завантаження...</span>
+                </div>
+                
+                <button id="hint-btn" onclick="showHint()" class="hidden text-[0.8rem] md:text-[0.85rem] font-bold text-amber-800 bg-amber-200 hover:bg-amber-300 px-2.5 py-1.5 rounded-full transition-colors flex items-center gap-1.5 high-contrast-shadow active:scale-95 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    <span class="hidden sm:inline">Підказка</span>
+                </button>
+            </div>
+
+            <!-- Варіанти відповідей -->
+            <div id="options-container"></div>
+
+            <!-- Панель зворотного зв'язку (мінімальна висота) -->
+            <div class="min-h-[2.5rem] lg:min-h-[3rem] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 rounded-xl transition-all duration-300 w-full mt-2" id="feedback-panel-container">
+                <div class="min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start rounded-xl px-3 lg:px-4 transition-all duration-300 bg-transparent text-center sm:text-left" id="feedback-panel">
+                    <span id="feedback-text" class="text-[14px] lg:text-[15px] font-bold"></span>
+                </div>
+                <!-- Кнопки керування -->
+                <button id="restart-btn" onclick="restart()" class="hidden bg-white text-emerald-700 border-2 border-emerald-500 font-bold py-1.5 px-4 rounded-xl shadow-sm hover:bg-emerald-50 transition-colors active:scale-[0.97] fade-in text-[0.85rem] lg:text-[0.9rem] shrink-0">
+                    На початок
+                </button>
+                <button id="next-btn" onclick="nextStep()" class="hidden bg-emerald-600 text-white font-bold py-1.5 px-5 rounded-xl shadow-md hover:bg-emerald-700 transition-all active:scale-[0.97] fade-in text-[0.85rem] lg:text-[0.9rem] shrink-0">
+                    Далі
+                </button>
+                <button id="check-multi-btn" onclick="checkMultiQuestionHandler()" class="hidden bg-emerald-600 text-white font-bold py-1.5 px-4 rounded-xl shadow-md hover:bg-emerald-700 transition-all active:scale-[0.97] fade-in text-[0.85rem] lg:text-[0.9rem] shrink-0">
+                    Перевірити
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПРАВА ПАНЕЛЬ -->
+    <div id="right-panel" class="w-full md:w-[50%] lg:w-[55%] xl:w-[60%] h-[45%] md:h-full bg-[#F7F9E2] flex items-center justify-center p-2 sm:p-4 transition-all duration-500 relative">
+        <div id="svg-container" class="w-full h-full max-h-[250px] md:max-h-full flex items-center justify-center z-10 [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto drop-shadow-sm"></div>
+    </div>
+
+    <script>
+        const steps = [
+            {
+                label: "№ 1",
+                question: "Чи правильні такі твердження про чотирикутники?",
+                type: "multi-question",
+                noImage: true,
+                subQuestions: [
+                    {
+                        text: "1. Чи правда, що у прямокутника всі сторони рівні?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 1
+                    },
+                    {
+                        text: "2. Чи правда, що у паралелограма протилежні сторони рівні?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 0
+                    },
+                    {
+                        text: "3. Чи правда, що діагоналі паралелограма точкою перетину діляться навпіл?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 0
+                    },
+                    {
+                        text: "4. Чи може паралелограм мати лише один прямий кут?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 1
+                    }
+                ]
+            },
+            {
+                label: "№ 2",
+                question: "Доповніть твердження, обравши правильний варіант:",
+                type: "multi-question",
+                noImage: true,
+                subQuestions: [
+                    {
+                        text: "1. Чотирикутник, у якого протилежні сторони попарно паралельні, називається...",
+                        options: ["опуклим чотирикутником", "паралелограмом", "неопуклим чотирикутником"],
+                        correctIndex: 1
+                    },
+                    {
+                        text: "2. Сума сусідніх кутів паралелограма дорівнює...",
+                        options: ["$90^\\circ$", "$360^\\circ$", "$180^\\circ$"],
+                        correctIndex: 2
+                    },
+                    {
+                        text: "3. Якщо в паралелограмі всі кути прямі, то це...",
+                        options: ["неопуклий чотирикутник", "прямокутний трикутник", "прямокутник"],
+                        correctIndex: 2
+                    },
+                    {
+                        text: "4. Діагоналі паралелограма точкою перетину...",
+                        options: ["відрізняються", "діляться навпіл", "діляться на три рівні частини"],
+                        correctIndex: 1
+                    }
+                ]
+            },
+            {
+                label: "№ 3",
+                question: "Чи можна стверджувати, що паралелограм є прямокутником?",
+                type: "multi-question",
+                noImage: true,
+                subQuestions: [
+                    {
+                        text: "а) якщо один із його кутів дорівнює $90^\\circ$?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 0
+                    },
+                    {
+                        text: "б) якщо його діагоналі перпендикулярні?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 1
+                    },
+                    {
+                        text: "в) якщо його діагоналі рівні?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 0
+                    },
+                    {
+                        text: "г) якщо дві його сусідні сторони рівні?",
+                        options: ["Так", "Ні"],
+                        correctIndex: 1
+                    }
+                ]
+            },
+            {
+                label: "№ 4",
+                question: "Діагоналі прямокутника $ABCD$ перетинаються в точці $O$. Кут $AOB$ дорівнює $60^\\circ$. Знайдіть кут $OAD$.",
+                type: "single",
+                hasHint: true,
+                options: [
+                    { text: "$60^\\circ$", isCorrect: false },
+                    { text: "$30^\\circ$", isCorrect: true },
+                    { text: "$45^\\circ$", isCorrect: false },
+                    { text: "$90^\\circ$", isCorrect: false }
+                ],
+                svg: `
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="fade-in">
+                    <!-- Кути малюються першими (на задньому плані) -->
+                    <path d="M 165.6 130 Q 150 150 165.6 170" fill="none" stroke="#10b981" stroke-width="3" />
+                    <!-- Червоні дуги -->
+                    <path d="M 120 220 A 40 40 0 0 0 114.6 200" fill="none" stroke="#ef4444" stroke-width="2.5" />
+                    <path d="M 128 220 A 48 48 0 0 0 121.5 195.8" fill="none" stroke="#ef4444" stroke-width="2.5" />
+                    
+                    <!-- Лінії прямокутника малюються поверх кутів -->
+                    <polygon points="80,220 80,80 320,80 320,220" fill="none" stroke="#334155" stroke-width="4" stroke-linejoin="round" />
+                    <line x1="80" y1="220" x2="320" y2="80" stroke="#334155" stroke-width="3" />
+                    <line x1="80" y1="80" x2="320" y2="220" stroke="#334155" stroke-width="3" />
+                    <circle cx="200" cy="150" r="5" fill="#1e293b" />
+                    
+                    <text x="55" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">A</text>
+                    <text x="55" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">B</text>
+                    <text x="330" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">C</text>
+                    <text x="330" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">D</text>
+                    <text x="200" y="135" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">O</text>
+                    
+                    <text x="125" y="156" font-family="sans-serif" font-size="15" fill="#10b981" font-weight="bold">60°</text>
+                    <text x="140" y="210" font-family="sans-serif" font-size="16" fill="#ef4444" font-weight="bold">?</text>
+                </svg>`,
+                svgHint: `
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="fade-in">
+                    <!-- Кути малюються першими (на задньому плані) -->
+                    <path d="M 165.6 130 Q 150 150 165.6 170" fill="none" stroke="#10b981" stroke-width="3" />
+                    <path d="M 120 220 A 40 40 0 0 0 114.6 200" fill="none" stroke="#ef4444" stroke-width="2.5" />
+                    <path d="M 128 220 A 48 48 0 0 0 121.5 195.8" fill="none" stroke="#ef4444" stroke-width="2.5" />
+                    
+                    <!-- 3 рожеві дуги для кута AOD, зменшені приблизно вдвічі та наближені до точки O -->
+                    <path d="M 189.6 156.1 A 12 12 0 0 0 210.4 156.1" fill="none" stroke="#ec4899" stroke-width="2" />
+                    <path d="M 187.0 157.6 A 15 15 0 0 0 213.0 157.6" fill="none" stroke="#ec4899" stroke-width="2" />
+                    <path d="M 184.5 159.1 A 18 18 0 0 0 215.5 159.1" fill="none" stroke="#ec4899" stroke-width="2" />
+                    
+                    <!-- Лінії прямокутника малюються поверх кутів -->
+                    <polygon points="80,220 80,80 320,80 320,220" fill="none" stroke="#334155" stroke-width="4" stroke-linejoin="round" />
+                    <line x1="80" y1="220" x2="320" y2="80" stroke="#334155" stroke-width="3" />
+                    <line x1="80" y1="80" x2="320" y2="220" stroke="#334155" stroke-width="3" />
+                    <circle cx="200" cy="150" r="5" fill="#1e293b" />
+                    
+                    <!-- Сині рисочки (на рівні ліній) -->
+                    <line x1="136.5" y1="179" x2="143.5" y2="191" stroke="#3b82f6" stroke-width="3" />
+                    <line x1="263.5" y1="179" x2="256.5" y2="191" stroke="#3b82f6" stroke-width="3" />
+                    
+                    <text x="55" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">A</text>
+                    <text x="55" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">B</text>
+                    <text x="330" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">C</text>
+                    <text x="330" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">D</text>
+                    <text x="200" y="135" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">O</text>
+                    
+                    <text x="125" y="156" font-family="sans-serif" font-size="15" fill="#10b981" font-weight="bold">60°</text>
+                    <text x="140" y="210" font-family="sans-serif" font-size="16" fill="#ef4444" font-weight="bold">?</text>
+                    
+                    <!-- Текст опущено вниз від дуг, щоб не зливався -->
+                    <text x="200" y="188" font-family="sans-serif" font-size="14" fill="#ec4899" font-weight="bold" text-anchor="middle">120°</text>
+                    
+                    <rect x="100" y="245" width="200" height="36" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="200" y="268" font-family="sans-serif" font-size="13" fill="#ef4444" font-weight="bold" text-anchor="middle">ΔAOD - рівнобедрений</text>
+                </svg>`
+            },
+            {
+                label: "№ 5",
+                question: "У прямокутнику $ABCD$ діагоналі $AC$ та $BD$ перетинаються в точці $O$. $\\angle AOB = 60^\\circ$, $AB = 7$ см. Знайдіть довжину $AC$.",
+                type: "single",
+                hasHint: true,
+                options: [
+                    { text: "7 см", isCorrect: false },
+                    { text: "10.5 см", isCorrect: false },
+                    { text: "14 см", isCorrect: true },
+                    { text: "21 см", isCorrect: false }
+                ],
+                svg: `
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="fade-in">
+                    <!-- Кути малюються першими -->
+                    <path d="M 165.6 130 Q 150 150 165.6 170" fill="none" stroke="#10b981" stroke-width="3" />
+                    
+                    <!-- Лінії прямокутника -->
+                    <polygon points="80,220 80,80 320,80 320,220" fill="none" stroke="#334155" stroke-width="4" stroke-linejoin="round" />
+                    <line x1="80" y1="220" x2="320" y2="80" stroke="#334155" stroke-width="3" />
+                    <line x1="80" y1="80" x2="320" y2="220" stroke="#334155" stroke-width="3" />
+                    <circle cx="200" cy="150" r="5" fill="#1e293b" />
+                    
+                    <!-- Тексти і точки -->
+                    <text x="55" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">A</text>
+                    <text x="55" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">B</text>
+                    <text x="330" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">C</text>
+                    <text x="330" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">D</text>
+                    <text x="200" y="135" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">O</text>
+                    
+                    <text x="125" y="156" font-family="sans-serif" font-size="15" fill="#10b981" font-weight="bold">60°</text>
+                    <!-- Сторона AB = 7 см -->
+                    <text x="65" y="156" font-family="sans-serif" font-size="16" fill="#3b82f6" font-weight="bold" text-anchor="end">7 см</text>
+                </svg>`,
+                svgHint: `
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="fade-in">
+                    <!-- Кути малюються першими -->
+                    <path d="M 165.6 130 Q 150 150 165.6 170" fill="none" stroke="#10b981" stroke-width="3" />
+                    
+                    <!-- Лінії прямокутника -->
+                    <polygon points="80,220 80,80 320,80 320,220" fill="none" stroke="#334155" stroke-width="4" stroke-linejoin="round" />
+                    <line x1="80" y1="220" x2="320" y2="80" stroke="#334155" stroke-width="3" />
+                    <line x1="80" y1="80" x2="320" y2="220" stroke="#334155" stroke-width="3" />
+                    <circle cx="200" cy="150" r="5" fill="#1e293b" />
+                    
+                    <!-- Рожеве позначення рівності сторін трикутника -->
+                    <line x1="130" y1="180" x2="150" y2="191" stroke="#ec4899" stroke-width="3" />
+                    <line x1="130" y1="120" x2="150" y2="109" stroke="#ec4899" stroke-width="3" />
+                    
+                    <!-- Тексти і точки -->
+                    <text x="55" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">A</text>
+                    <text x="55" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">B</text>
+                    <text x="330" y="75" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">C</text>
+                    <text x="330" y="235" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">D</text>
+                    <text x="200" y="135" font-family="serif" font-size="22" font-style="italic" font-weight="bold" fill="#1e293b">O</text>
+                    
+                    <text x="125" y="156" font-family="sans-serif" font-size="15" fill="#10b981" font-weight="bold">60°</text>
+                    <text x="65" y="156" font-family="sans-serif" font-size="16" fill="#3b82f6" font-weight="bold" text-anchor="end">7 см</text>
+                    
+                    <!-- Рожеві розміри на AO і BO -->
+                    <text x="145" y="210" font-family="sans-serif" font-size="15" fill="#ec4899" font-weight="bold">7 см</text>
+                    <text x="145" y="100" font-family="sans-serif" font-size="15" fill="#ec4899" font-weight="bold">7 см</text>
+                    
+                    <!-- Блок з поясненням (ніжно-рожевий) -->
+                    <rect x="50" y="250" width="300" height="36" rx="8" fill="#fdf2f8" stroke="#ec4899" stroke-width="2"/>
+                    <!-- Заміна хрестика на крапочку в множенні -->
+                    <text x="200" y="273" font-family="sans-serif" font-size="13" fill="#be185d" font-weight="bold" text-anchor="middle">ΔAOB - рівносторонній, AC = 2 · AO</text>
+                </svg>`
+            }
+        ];
+
+        let currentStep = 0;
+        let isAnswered = false;
+
+        function render() {
+            isAnswered = false;
+            const step = steps[currentStep];
+            
+            document.getElementById("step-label").innerText = step.label;
+            document.getElementById("question-text").innerHTML = step.question;
+            
+            const hintBtn = document.getElementById("hint-btn");
+            if (step.hasHint) {
+                hintBtn.classList.remove("hidden");
+            } else {
+                hintBtn.classList.add("hidden");
+            }
+
+            const leftPanel = document.getElementById("left-panel");
+            const rightPanel = document.getElementById("right-panel");
+            
+            if (step.noImage) {
+                rightPanel.classList.add("hidden");
+                leftPanel.classList.remove("md:w-[50%]", "lg:w-[45%]", "xl:w-[40%]");
+                leftPanel.classList.add("md:w-full");
+            } else {
+                rightPanel.classList.remove("hidden");
+                leftPanel.classList.remove("md:w-full");
+                leftPanel.classList.add("md:w-[50%]", "lg:w-[45%]", "xl:w-[40%]");
+                document.getElementById("svg-container").innerHTML = step.svg;
+            }
+
+            const panel = document.getElementById("feedback-panel");
+            const txt = document.getElementById("feedback-text");
+            panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start rounded-xl px-3 lg:px-4 transition-all duration-300 bg-transparent text-center sm:text-left text-[14px] lg:text-[15px]";
+            txt.innerText = "";
+            
+            document.getElementById("restart-btn").classList.add("hidden");
+            document.getElementById("next-btn").classList.add("hidden");
+            document.getElementById("check-multi-btn").classList.add("hidden");
+            
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+            
+            if (step.type === "single") {
+                container.className = "space-y-1.5 sm:space-y-2 max-w-3xl";
+                const labels = ['А', 'Б', 'В', 'Г'];
+                step.options.forEach((opt, i) => {
+                    const btn = document.createElement("button");
+                    btn.className = "w-full text-left p-2 lg:p-2.5 rounded-xl bg-white border-2 border-slate-200 hover:border-emerald-400 shadow-sm hover:shadow-md transition-all flex items-center group focus:outline-none active:scale-[0.99]";
+                    btn.innerHTML = `
+                        <span class="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold mr-2.5 shrink-0 text-[14px] lg:text-[15px] transition-colors group-hover:bg-emerald-600 group-hover:text-white">${labels[i]}</span>
+                        <span class="math-font text-[15px] lg:text-[16px] text-slate-700 font-medium">${opt.text}</span>
+                    `;
+                    btn.onclick = () => checkSingle(i, btn);
+                    container.appendChild(btn);
+                });
+            } 
+            else if (step.type === "multi-question") {
+                container.className = "grid grid-cols-1 lg:grid-cols-2 gap-1.5 sm:gap-2";
+                
+                step.subQuestions.forEach((sq, sqIdx) => {
+                    const block = document.createElement("div");
+                    block.className = "p-2 lg:p-3 bg-white rounded-xl border-2 border-slate-100 shadow-sm flex flex-col justify-between h-full";
+                    block.innerHTML = `<div class="text-[13px] lg:text-[14px] font-semibold math-font text-slate-800 mb-1.5 leading-tight">${sq.text}</div>`;
+                    
+                    const optsContainer = document.createElement("div");
+                    optsContainer.className = "flex flex-col gap-1.5 mt-auto w-full";
+                    
+                    sq.options.forEach((opt, optIdx) => {
+                        const btn = document.createElement("button");
+                        btn.className = "w-full text-left px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg border-2 border-slate-200 text-slate-700 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-800 focus:outline-none transition-all sq-btn font-bold text-[0.8rem] lg:text-[0.85rem] math-font active:scale-95";
+                        btn.dataset.sqIdx = sqIdx;
+                        btn.dataset.optIdx = optIdx;
+                        btn.innerHTML = opt;
+                        
+                        btn.onclick = () => {
+                            if (isAnswered) return;
+                            optsContainer.querySelectorAll('button').forEach(b => {
+                                b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600', 'selected', 'bg-rose-500', 'border-rose-500', 'text-white');
+                                b.classList.add('border-slate-200', 'text-slate-700', 'bg-slate-50');
+                            });
+                            btn.classList.remove('border-slate-200', 'text-slate-700', 'bg-slate-50');
+                            btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600', 'selected');
+                            
+                            const pnl = document.getElementById("feedback-panel");
+                            if (pnl.classList.contains("bg-rose-100") || pnl.classList.contains("bg-amber-100")) {
+                                pnl.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start rounded-xl px-3 lg:px-4 transition-all duration-300 bg-transparent text-[14px] lg:text-[15px]";
+                                document.getElementById("feedback-text").innerText = "";
+                            }
+                        };
+                        optsContainer.appendChild(btn);
+                    });
+                    block.appendChild(optsContainer);
+                    container.appendChild(block);
+                });
+                
+                const checkBtn = document.getElementById("check-multi-btn");
+                checkBtn.classList.remove("hidden");
+            }
+
+            renderMathInElement(document.body, { 
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ], 
+                throwOnError: false 
+            });
+        }
+
+        function showHint() {
+            if (isAnswered) return;
+            const step = steps[currentStep];
+            if (step.svgHint && !step.noImage) {
+                document.getElementById("svg-container").innerHTML = step.svgHint;
+                document.getElementById("hint-btn").classList.add("hidden");
+            }
+        }
+
+        function checkSingle(idx, btn) {
+            if (isAnswered) return;
+            const step = steps[currentStep];
+            const opt = step.options[idx];
+            const panel = document.getElementById("feedback-panel");
+            const txt = document.getElementById("feedback-text");
+            const badge = btn.querySelector('span');
+            
+            if (opt.isCorrect) {
+                isAnswered = true;
+                btn.className = "w-full text-left p-2 lg:p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 shadow-md flex items-center";
+                badge.className = "w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold mr-2.5 shrink-0 text-[14px] lg:text-[15px]";
+                panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start bg-emerald-100 text-emerald-800 px-3 lg:px-4 rounded-xl border-2 border-emerald-300 shadow-sm text-[14px] lg:text-[15px]";
+                
+                if (step.svgHint) document.getElementById("svg-container").innerHTML = step.svgHint;
+                document.querySelectorAll("#options-container button").forEach(b => b.disabled = true);
+                
+                if (currentStep < steps.length - 1) {
+                    txt.innerText = "Правильно!";
+                    document.getElementById("next-btn").classList.remove("hidden");
+                } else {
+                    showFinal();
+                }
+            } else {
+                btn.className = "w-full text-left p-2 lg:p-2.5 rounded-xl border-2 border-rose-400 bg-rose-50 opacity-70 flex items-center";
+                badge.className = "w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold mr-2.5 shrink-0 text-[14px] lg:text-[15px]";
+                panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start bg-rose-100 text-rose-800 px-3 lg:px-4 rounded-xl border border-rose-300 text-[14px] lg:text-[15px]";
+                txt.innerText = "Неправильно. Спробуйте інший варіант.";
+                btn.disabled = true;
+            }
+        }
+
+        function checkMultiQuestionHandler() {
+            if (isAnswered) return;
+            const step = steps[currentStep];
+            const panel = document.getElementById("feedback-panel");
+            const txt = document.getElementById("feedback-text");
+            
+            let allCorrect = true;
+            let answeredCount = 0;
+            
+            step.subQuestions.forEach((sq, sqIdx) => {
+                const selectedBtn = document.querySelector(`.sq-btn[data-sq-idx="${sqIdx}"].selected`);
+                if (selectedBtn) {
+                    answeredCount++;
+                    const selectedOptIdx = parseInt(selectedBtn.dataset.optIdx);
+                    if (selectedOptIdx !== sq.correctIndex) {
+                        allCorrect = false;
+                        selectedBtn.classList.remove('bg-emerald-600', 'border-emerald-600');
+                        selectedBtn.classList.add('bg-rose-500', 'border-rose-500');
+                    } else {
+                        selectedBtn.classList.remove('bg-emerald-600');
+                        selectedBtn.classList.add('bg-emerald-500');
+                    }
+                } else {
+                    allCorrect = false;
+                }
+            });
+            
+            if (answeredCount < step.subQuestions.length) {
+                panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center bg-amber-100 text-amber-800 px-3 lg:px-4 rounded-xl border border-amber-300 text-[14px] lg:text-[15px]";
+                txt.innerText = "Будь ласка, дайте відповідь на всі запитання.";
+                return;
+            }
+            
+            if (allCorrect) {
+                isAnswered = true;
+                document.getElementById("check-multi-btn").classList.add("hidden");
+                
+                document.querySelectorAll('.sq-btn').forEach(b => {
+                    b.disabled = true;
+                    if (!b.classList.contains('selected')) {
+                        b.classList.add('opacity-40');
+                    }
+                });
+                
+                panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start bg-emerald-100 text-emerald-800 px-3 lg:px-4 rounded-xl border-2 border-emerald-300 shadow-sm text-[14px] lg:text-[15px]";
+                txt.innerText = "Чудово! Всі відповіді правильні.";
+                
+                if (currentStep < steps.length - 1) {
+                    document.getElementById("next-btn").classList.remove("hidden");
+                } else {
+                    showFinal();
+                }
+            } else {
+                panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start bg-rose-100 text-rose-800 px-3 lg:px-4 rounded-xl border border-rose-300 text-[14px] lg:text-[15px]";
+                txt.innerText = "Є помилки. Виправте червоні варіанти.";
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                render();
+            }
+        }
+
+        function showFinal() {
+            document.getElementById("check-multi-btn").classList.add("hidden");
+            const btn = document.getElementById("restart-btn");
+            btn.classList.remove("hidden");
+            
+            const panel = document.getElementById("feedback-panel");
+            const txt = document.getElementById("feedback-text");
+            panel.className = "min-h-[2.5rem] lg:min-h-[3rem] flex-1 flex items-center justify-center sm:justify-start bg-emerald-100 text-emerald-800 px-3 lg:px-4 rounded-xl border-2 border-emerald-300 shadow-sm text-[15px] lg:text-[16px]";
+            txt.innerText = "Всі завдання виконано успішно! 🏆";
+        }
+
+        function restart() {
+            currentStep = 0;
+            render();
+        }
+
+        window.onload = render;
+    </script>
+</body>
+</html>
